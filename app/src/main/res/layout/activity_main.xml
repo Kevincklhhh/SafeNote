@@ -5,38 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-    <EditText
-        android:id = "@+id/editText2"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
-        android:inputType = "textPassword" />
-    <Button
-        android:id = "@+id/button1"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
-        android:onClick = "login"
-        android:text = "@string/Login"
-        />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SafeNote"
-            android:textSize="42sp" />
-
-        <Button
-            android:id="@+id/button_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Click me!"
-            android:textSize="24sp" />
-
-    </LinearLayout>
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,6 +19,8 @@
             app:popupTheme="@style/Theme.SafeNote.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
+
+    <include layout="@layout/content_main" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
