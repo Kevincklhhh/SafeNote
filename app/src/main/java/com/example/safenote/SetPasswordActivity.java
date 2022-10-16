@@ -2,11 +2,14 @@ package com.example.safenote;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.util.Objects;
 
 public class SetPasswordActivity extends AppCompatActivity {
 
@@ -35,24 +38,33 @@ public class SetPasswordActivity extends AppCompatActivity {
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (newPassword.getText().toString() != confirmPassword.getText().toString()) {
+                // TODO: add keystore steps here, not storing password in plaintext
+                SharedPreferences sh = getSharedPreferences("password", MODE_PRIVATE);//store password in sharedpreference
+                String storedPassword = sh.getString("password", "");
+                System.out.println("old password is"+storedPassword);
+                System.out.println("Entered old password is"+oldPassword.getText().toString());
+                if (!newPassword.getText().toString().equals(confirmPassword.getText().toString())) {
                     Toast.makeText(
                             getApplicationContext(),
                             "Please make sure you entered new password correctly!",
                             Toast.LENGTH_SHORT
                     ).show();
                 }
-                // TODO: Check password correspondence
-                if (oldPassword.getText().toString() == "oldpassword") {
-                    // TODO: change password
+                if (oldPassword.getText().toString().equals(storedPassword) || storedPassword.equals("")) {//old password equals entered old password, or oldpassword is empty (meaning it's new user)
+                    System.out.println("entered=stored check passed, old password is"+storedPassword);
+
                     Toast.makeText(
                             getApplicationContext(),
                             "Changed Password successfully!",
                             Toast.LENGTH_SHORT
                     ).show();
-                    String ToStore = oldPassword.getText().toString();
-
+                    String toStore = newPassword.getText().toString();//store the password in shared preference as key-value pair
+                    SharedPreferences.Editor myEdit = sh.edit();
+                    myEdit.putString("password", toStore);
+                    myEdit.apply();
+                    System.out.println("new stored password is "+sh.getString("password", "(failed to get)"));
                 } else {
+                    System.out.println("Old password entered incorrectly, old password is "+storedPassword);
                     Toast.makeText(
                             getApplicationContext(),
                             "Old password entered incorrectly. Please try again!",

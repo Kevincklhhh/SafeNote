@@ -41,8 +41,8 @@
 
         <Button
             android:id="@+id/SetPasswordButton"
-            android:layout_width="171dp"
-            android:layout_height="39dp"
+            android:layout_width="264dp"
+            android:layout_height="78dp"
             android:text="@string/set_reset_password"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
