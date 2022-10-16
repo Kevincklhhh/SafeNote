@@ -1,5 +1,6 @@
 package com.example.safenote;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -14,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         EditText passwordInput= findViewById(R.id.editTextTextPassword);//用户输密码
         Button login =  findViewById(R.id.LoginButton);
+        Context context = getApplicationContext();
         login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {// TODO: Check password correspondence
                 Intent intent = new Intent(getApplicationContext(), NoteActivity.class);

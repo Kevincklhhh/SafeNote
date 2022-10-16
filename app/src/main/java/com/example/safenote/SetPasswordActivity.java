@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
 public class SetPasswordActivity extends AppCompatActivity {
@@ -17,6 +19,22 @@ public class SetPasswordActivity extends AppCompatActivity {
     private EditText newPassword;
     private EditText confirmPassword;
     private Button buttonSubmit;
+
+    public static String hashPassword(String password) throws NoSuchAlgorithmException {
+
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        md.reset();
+        md.update(password.getBytes());
+        byte[] mdArray = md.digest();
+        StringBuilder sb = new StringBuilder(mdArray.length * 2);
+        for(byte b : mdArray) {
+            int v = b & 0xff;
+            if(v < 16)
+                sb.append('0');
+            sb.append(Integer.toHexString(v));
+        }
+        return sb.toString();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +69,7 @@ public class SetPasswordActivity extends AppCompatActivity {
                     ).show();
                 }
                 if (oldPassword.getText().toString().equals(storedPassword) || storedPassword.equals("")) {//old password equals entered old password, or oldpassword is empty (meaning it's new user)
-                    System.out.println("entered=stored check passed, old password is"+storedPassword);
+                    System.out.println("entered=stored check passed, old password is" + storedPassword);
 
                     Toast.makeText(
                             getApplicationContext(),
@@ -59,10 +77,16 @@ public class SetPasswordActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT
                     ).show();
                     String toStore = newPassword.getText().toString();//store the password in shared preference as key-value pair
+                    String hashed = null;
+                    try {
+                        hashed = hashPassword(toStore);
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
                     SharedPreferences.Editor myEdit = sh.edit();
-                    myEdit.putString("password", toStore);
+                    myEdit.putString("password", hashed);
                     myEdit.apply();
-                    System.out.println("new stored password is "+sh.getString("password", "(failed to get)"));
+                    System.out.println("new stored password is " + sh.getString("password", "(failed to get)"));
                 } else {
                     System.out.println("Old password entered incorrectly, old password is "+storedPassword);
                     Toast.makeText(
