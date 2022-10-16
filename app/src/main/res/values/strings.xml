@@ -9,5 +9,8 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <string name="Login" />
+    <string name="Login">Log In</string>/>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="welcome_to_safenote">Welcome to SafeNote!</string>
+    <string name="set_reset_password">Set/Reset Password</string>
 </resources>

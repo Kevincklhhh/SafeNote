@@ -23,6 +23,7 @@ public class SetPasswordActivity extends AppCompatActivity {
         setButtonSubmit();
     }
 
+
     private void bindViews() {
         this.oldPassword = (EditText) findViewById(R.id.editTextTextPassword2);
         this.newPassword = (EditText) findViewById(R.id.editTextTextPassword3);
@@ -49,6 +50,8 @@ public class SetPasswordActivity extends AppCompatActivity {
                             "Changed Password successfully!",
                             Toast.LENGTH_SHORT
                     ).show();
+                    String ToStore = oldPassword.getText().toString();
+
                 } else {
                     Toast.makeText(
                             getApplicationContext(),

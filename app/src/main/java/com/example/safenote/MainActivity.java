@@ -1,43 +1,41 @@
 package com.example.safenote;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.View;
-
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.safenote.databinding.ActivityMainBinding;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EditText passwordInput= (EditText) findViewById(R.id.editTextTextPassword);//用户输密码
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        setSupportActionBar(binding.toolbar);
-
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+        setContentView(R.layout.activity_main);
+        EditText passwordInput= findViewById(R.id.editTextTextPassword);//用户输密码
+        Button login =  findViewById(R.id.LoginButton);
+        login.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {// TODO: Check password correspondence
+                Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
+                startActivity(intent);
+            }
+        });
+        Button setPassword = findViewById(R.id.SetPasswordButton);
+        setPassword.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {// TODO: Check password correspondence
+                Intent intent = new Intent(getApplicationContext(), SetPasswordActivity.class);
+                startActivity(intent);
             }
         });
     }
