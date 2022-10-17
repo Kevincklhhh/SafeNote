@@ -14,6 +14,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 
@@ -52,7 +53,20 @@ public class KeyManager {
         }
         return keyGenerator.generateKey();
     }
+    private void generateRandomIV(Context ctx){
+        SharedPreferences pref = ctx.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
+        String publicIV = pref.getString(IV, null);
+        if(publicIV == null){
+            SecureRandom random = new SecureRandom();
+            byte[] generated = random.generateSeed(12);
+            String generatedIVstr = Base64.encodeToString(generated, Base64.DEFAULT);
+            SharedPreferences.Editor edit = pref.edit();
+            edit.putString(IV, generatedIVstr);
+            edit.apply();
+        }
+    }
     public String encrypt(Context context, String input) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, UnsupportedEncodingException {
+        generateRandomIV(context);
         Cipher c = null;
         SharedPreferences pref = context.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
         String iv = pref.getString(IV, null);
@@ -67,6 +81,7 @@ public class KeyManager {
         return Base64.encodeToString(encodedBytes, Base64.DEFAULT);
     }
     public String decrypt(Context context, String encrypted) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
+        generateRandomIV(context);
         Cipher c = null;
         SharedPreferences pref = context.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
         String iv = pref.getString(IV, null);
