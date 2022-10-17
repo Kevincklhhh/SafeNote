@@ -43,33 +43,13 @@ public class NoteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_note);
         Button addLocation = findViewById(R.id.add_location);
 
+        LocationRequest.Builder Build=new LocationRequest.Builder(5000);
+        Build.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
+        locationRequest=Build.build();
+
         addLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
-                    if(ActivityCompat.checkSelfPermission(NoteActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
-                        if(GPSEnable()==true){
-                            LocationServices.getFusedLocationProviderClient(NoteActivity.this)
-                                    .requestLocationUpdates(locationRequest, new LocationCallback() {
-                                        @Override
-                                        public void onLocationResult(@NonNull LocationResult locationResult) {
-                                            super.onLocationResult(locationResult);
-                                            LocationServices.getFusedLocationProviderClient(NoteActivity.this).removeLocationUpdates(this);
-                                            if (locationResult != null && locationResult.getLocations().size()>0){
-                                                int index=locationResult.getLocations().size()-1;
-                                                latitude=locationResult.getLocations().get(index).getLatitude();
-                                                longitude=locationResult.getLocations().get(index).getLongitude();
-                                            }
-                                        }
-                                    }, Looper.getMainLooper());
-                        }
-                        else{
-                            RequestTurnOnGPS();
-                        }
-                    }
-                    else{
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                    }
-                }
+                getLocation();
             }
         });
 
@@ -95,11 +75,19 @@ public class NoteActivity extends AppCompatActivity {
 
     }
 
-    private void RequestTurnOnGPS() {
-        LocationRequest.Builder Build=new LocationRequest.Builder(5000);
-        Build.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
-        locationRequest=Build.build();
+    private boolean GPSEnable(){
+        LocationManager locationManager=null;
+        boolean enabled=false;
 
+        if(locationManager==null){
+            locationManager=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        }
+
+        enabled=locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        return enabled;
+    }
+
+    private void RequestTurnOnGPS() {
         LocationSettingsRequest.Builder builder=new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
         builder.setAlwaysShow(true);
         Task<LocationSettingsResponse> result = LocationServices.getSettingsClient(getApplicationContext()).checkLocationSettings(builder.build());
@@ -127,15 +115,35 @@ public class NoteActivity extends AppCompatActivity {
         });
     }
 
-    private boolean GPSEnable(){
-        LocationManager locationManager=null;
-        boolean enabled=false;
-
-        if(locationManager==null){
-            locationManager=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
+    private void getLocation(){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
+            if(ActivityCompat.checkSelfPermission(NoteActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
+                if(GPSEnable()){
+                    LocationServices.getFusedLocationProviderClient(NoteActivity.this)
+                            .requestLocationUpdates(locationRequest, new LocationCallback() {
+                                @Override
+                                public void onLocationResult(@NonNull LocationResult locationResult) {
+                                    super.onLocationResult(locationResult);
+                                    LocationServices.getFusedLocationProviderClient(NoteActivity.this).removeLocationUpdates(this);
+                                    if (locationResult != null && locationResult.getLocations().size()>0){
+                                        int index=locationResult.getLocations().size()-1;
+                                        latitude=locationResult.getLocations().get(index).getLatitude();
+                                        longitude=locationResult.getLocations().get(index).getLongitude();
+                                        System.out.println(latitude);
+                                        System.out.println(longitude);
+                                    }
+                                }
+                            }, Looper.getMainLooper());
+                }
+                else{
+                    RequestTurnOnGPS();
+                }
+            }
+            else{
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            }
         }
-
-        enabled=locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        return enabled;
     }
+
+
 }
