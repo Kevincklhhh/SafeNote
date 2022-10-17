@@ -28,6 +28,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -95,8 +96,10 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     private void RequestTurnOnGPS() {
-        //TODO initialize the locationRequest
-        //locationRequest=new LocationRequest.Builder();
+        LocationRequest.Builder Build=new LocationRequest.Builder(5000);
+        Build.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
+        locationRequest=Build.build();
+
         LocationSettingsRequest.Builder builder=new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
         builder.setAlwaysShow(true);
         Task<LocationSettingsResponse> result = LocationServices.getSettingsClient(getApplicationContext()).checkLocationSettings(builder.build());
