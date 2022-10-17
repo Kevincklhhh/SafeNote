@@ -9,9 +9,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.UnsupportedEncodingException;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Objects;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class SetPasswordActivity extends AppCompatActivity {
 
@@ -57,10 +64,32 @@ public class SetPasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // TODO: add keystore steps here, not storing password in plaintext
-                SharedPreferences sh = getSharedPreferences("password", MODE_PRIVATE);//store password in sharedpreference
+                KeyManager km = new KeyManager();
+                SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);//store password in shared preference
                 String storedPassword = sh.getString("password", "");
-                System.out.println("old password is"+storedPassword);
-                System.out.println("Entered old password is"+oldPassword.getText().toString());
+                try {
+                    SharedPreferences.Editor myEdit = sh.edit();
+                    myEdit.putString("password", km.encrypt(getApplicationContext(),"hahaha"));
+                    myEdit.apply();
+                    String storedhahaha = sh.getString("password", "");
+                    System.out.println(storedhahaha);
+                    System.out.println(km.decrypt(getApplicationContext(),"hahaha"));
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (NoSuchPaddingException e) {
+                    e.printStackTrace();
+                } catch (NoSuchProviderException e) {
+                    e.printStackTrace();
+                } catch (BadPaddingException e) {
+                    e.printStackTrace();
+                } catch (IllegalBlockSizeException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                //System.out.println("old password is"+storedPassword);
+                //System.out.println("Entered old password is"+oldPassword.getText().toString());
                 if (!newPassword.getText().toString().equals(confirmPassword.getText().toString())) {
                     Toast.makeText(
                             getApplicationContext(),
@@ -69,8 +98,7 @@ public class SetPasswordActivity extends AppCompatActivity {
                     ).show();
                 }
                 if (oldPassword.getText().toString().equals(storedPassword) || storedPassword.equals("")) {//old password equals entered old password, or oldpassword is empty (meaning it's new user)
-                    System.out.println("entered=stored check passed, old password is" + storedPassword);
-
+                    //System.out.println("entered=stored check passed, old password is" + storedPassword);
                     Toast.makeText(
                             getApplicationContext(),
                             "Changed Password successfully!",
@@ -84,11 +112,11 @@ public class SetPasswordActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     SharedPreferences.Editor myEdit = sh.edit();
-                    myEdit.putString("password", hashed);
+                    myEdit.putString("password", toStore);
                     myEdit.apply();
-                    System.out.println("new stored password is " + sh.getString("password", "(failed to get)"));
+                    //System.out.println("new stored password is " + sh.getString("password", "(failed to get)"));
                 } else {
-                    System.out.println("Old password entered incorrectly, old password is "+storedPassword);
+                    //System.out.println("Old password entered incorrectly, old password is "+storedPassword);
                     Toast.makeText(
                             getApplicationContext(),
                             "Old password entered incorrectly. Please try again!",
