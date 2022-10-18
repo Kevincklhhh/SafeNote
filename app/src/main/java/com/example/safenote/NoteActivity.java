@@ -8,6 +8,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 //import android.location.LocationRequest;
@@ -15,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,6 +40,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class NoteActivity extends AppCompatActivity {
 
@@ -57,6 +66,8 @@ public class NoteActivity extends AppCompatActivity {
         Build.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
         locationRequest = Build.build();
 
+        SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);
+        KeyManager km = new KeyManager();
         Button addLocation = findViewById(R.id.add_location);
         addLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -67,6 +78,28 @@ public class NoteActivity extends AppCompatActivity {
         Button viewLocation = findViewById(R.id.view_location);
         viewLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                String storedLatitude = sh.getString("latitude", "");
+                String storedLongitude = sh.getString("longitude", "");
+                String decryptedlatitude = null;
+                String decryptedlongitude = null;
+                try {
+                    decryptedlatitude = Base64.encodeToString(km.decrypt(getApplicationContext(),Base64.decode(storedLatitude.getBytes("UTF-8"), Base64.DEFAULT)), Base64.DEFAULT);
+                    decryptedlongitude = Base64.encodeToString(km.decrypt(getApplicationContext(),Base64.decode(storedLongitude.getBytes("UTF-8"), Base64.DEFAULT)), Base64.DEFAULT);
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (NoSuchPaddingException e) {
+                    e.printStackTrace();
+                } catch (NoSuchProviderException e) {
+                    e.printStackTrace();
+                } catch (BadPaddingException e) {
+                    e.printStackTrace();
+                } catch (IllegalBlockSizeException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                latitude = Double.parseDouble(decryptedlatitude);
+                longitude = Double.parseDouble(decryptedlongitude);
                 String location = "geo:" + String.valueOf(latitude) + "," + String.valueOf(longitude);
                 //System.out.println(location);
                 Uri gmmIntentUri = Uri.parse(location);
@@ -169,6 +202,7 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     private void getLocation() {
+        KeyManager km = new KeyManager();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(NoteActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 if (GPSEnable()) {
@@ -182,6 +216,31 @@ public class NoteActivity extends AppCompatActivity {
                                         int index = locationResult.getLocations().size() - 1;
                                         latitude = locationResult.getLocations().get(index).getLatitude();
                                         longitude = locationResult.getLocations().get(index).getLongitude();
+                                        String latString = latitude+"";
+                                        String longString = latitude+"";
+                                        String latToStore = null;
+                                        String longToStore = null;
+                                        try {
+                                            latToStore = Base64.encodeToString(km.encrypt(getApplicationContext(), latString.getBytes("UTF-8")), Base64.DEFAULT);
+                                            longToStore= Base64.encodeToString(km.encrypt(getApplicationContext(), longString.getBytes("UTF-8")), Base64.DEFAULT);
+                                        } catch (NoSuchAlgorithmException e) {
+                                            e.printStackTrace();
+                                        } catch (NoSuchPaddingException e) {
+                                            e.printStackTrace();
+                                        } catch (NoSuchProviderException e) {
+                                            e.printStackTrace();
+                                        } catch (BadPaddingException e) {
+                                            e.printStackTrace();
+                                        } catch (IllegalBlockSizeException e) {
+                                            e.printStackTrace();
+                                        } catch (UnsupportedEncodingException e) {
+                                            e.printStackTrace();
+                                        }
+                                        SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);
+                                        SharedPreferences.Editor myEdit = sh.edit();
+                                        myEdit.putString("longitude", longToStore);
+                                        myEdit.putString("latitude", latToStore);
+                                        myEdit.apply();
                                         //System.out.println(latitude);
                                         //System.out.println(longitude);
                                     }
