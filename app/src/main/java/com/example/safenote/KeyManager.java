@@ -40,7 +40,6 @@ public class KeyManager {
         final KeyGenerator keyGenerator = KeyGenerator
                 .getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
         if(!ks.containsAlias(KEY_ALIAS)) {
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 keyGenerator.init(new KeyGenParameterSpec.Builder(KEY_ALIAS,
                         KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
@@ -54,18 +53,18 @@ public class KeyManager {
         }
         return keyGenerator.generateKey();
     }
-    private void generateRandomIV(Context ctx){
-        SharedPreferences pref = ctx.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
-        String publicIV = pref.getString(IV, null);
-        if(publicIV == null){
-            SecureRandom random = new SecureRandom();
-            byte[] generated = random.generateSeed(12);
-            String generatedIVstr = Base64.encodeToString(generated, Base64.DEFAULT);
-            SharedPreferences.Editor edit = pref.edit();
-            edit.putString(IV, generatedIVstr);
-            edit.apply();
-        }
-    }
+//    private void generateRandomIV(Context ctx){
+//        SharedPreferences pref = ctx.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
+//        String publicIV = pref.getString(IV, null);
+//        if(publicIV == null){
+//            SecureRandom random = new SecureRandom();
+//            byte[] generated = random.generateSeed(12);
+//            String generatedIVstr = Base64.encodeToString(generated, Base64.DEFAULT);
+//            SharedPreferences.Editor edit = pref.edit();
+//            edit.putString(IV, generatedIVstr);
+//            edit.apply();
+//        }
+//    }
     public String encrypt(Context context, String input) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, UnsupportedEncodingException {
         //generateRandomIV(context);
         Cipher c = null;
@@ -86,8 +85,9 @@ public class KeyManager {
         byte[] encodedBytes = c.doFinal(input.getBytes("UTF-8"));
         return Base64.encodeToString(encodedBytes, Base64.DEFAULT);
     }
+
     public String decrypt(Context context, String encrypted) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
-        generateRandomIV(context);
+        //generateRandomIV(context);
         Cipher c = null;
         SharedPreferences pref = context.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
         String iv = pref.getString(IV, null);

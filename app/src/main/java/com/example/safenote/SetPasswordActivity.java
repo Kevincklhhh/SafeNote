@@ -4,12 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -27,20 +29,11 @@ public class SetPasswordActivity extends AppCompatActivity {
     private EditText confirmPassword;
     private Button buttonSubmit;
 
-    public static String hashPassword(String password) throws NoSuchAlgorithmException {
+    public byte[] hashPassword(String password) throws NoSuchAlgorithmException {
 
-        MessageDigest md = MessageDigest.getInstance("SHA-512");
-        md.reset();
-        md.update(password.getBytes());
-        byte[] mdArray = md.digest();
-        StringBuilder sb = new StringBuilder(mdArray.length * 2);
-        for(byte b : mdArray) {
-            int v = b & 0xff;
-            if(v < 16)
-                sb.append('0');
-            sb.append(Integer.toHexString(v));
-        }
-        return sb.toString();
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
+        return hash;
     }
 
     @Override
@@ -67,26 +60,26 @@ public class SetPasswordActivity extends AppCompatActivity {
                 KeyManager km = new KeyManager();
                 SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);//store password in shared preference
                 String storedPassword = sh.getString("password", "");
-                try {
-                    SharedPreferences.Editor myEdit = sh.edit();
-                    myEdit.putString("password", km.encrypt(getApplicationContext(),"hahaha"));
-                    myEdit.apply();
-                    String storedhahaha = sh.getString("password", "");
-                    System.out.println(storedhahaha);
-                    System.out.println(km.decrypt(getApplicationContext(),storedhahaha));
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (NoSuchPaddingException e) {
-                    e.printStackTrace();
-                } catch (NoSuchProviderException e) {
-                    e.printStackTrace();
-                } catch (BadPaddingException e) {
-                    e.printStackTrace();
-                } catch (IllegalBlockSizeException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    SharedPreferences.Editor myEdit = sh.edit();
+//                    myEdit.putString("password", km.encrypt(getApplicationContext(),"hahaha"));
+//                    myEdit.apply();
+//                    String storedhahaha = sh.getString("password", "");
+//                    System.out.println(storedhahaha);
+//                    System.out.println(km.decrypt(getApplicationContext(),storedhahaha));
+//                } catch (NoSuchAlgorithmException e) {
+//                    e.printStackTrace();
+//                } catch (NoSuchPaddingException e) {
+//                    e.printStackTrace();
+//                } catch (NoSuchProviderException e) {
+//                    e.printStackTrace();
+//                } catch (BadPaddingException e) {
+//                    e.printStackTrace();
+//                } catch (IllegalBlockSizeException e) {
+//                    e.printStackTrace();
+//                } catch (UnsupportedEncodingException e) {
+//                    e.printStackTrace();
+//                }
 
                 //System.out.println("old password is"+storedPassword);
                 //System.out.println("Entered old password is"+oldPassword.getText().toString());
@@ -104,10 +97,14 @@ public class SetPasswordActivity extends AppCompatActivity {
                             "Changed Password successfully!",
                             Toast.LENGTH_SHORT
                     ).show();
-                    String toStore = newPassword.getText().toString();//store the password in shared preference as key-value pair
-                    String hashed = null;
+                    String newPasswordString = newPassword.getText().toString();//store the password in shared preference as key-value pair
+                    byte[] hashed = null;
+                    String toStore = null;
+
                     try {
-                        hashed = hashPassword(toStore);
+                        hashed = hashPassword(newPasswordString);
+                        EncryptedByte
+                         toStore = Base64.encodeToString(hashed, Base64.DEFAULT);
                     } catch (NoSuchAlgorithmException e) {
                         e.printStackTrace();
                     }
