@@ -10,51 +10,66 @@
         android:id="@+id/note_title"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
         android:hint="Note Title"
         android:textSize="20dp"
         android:textStyle="bold"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="32dp" />
+        app:layout_constraintEnd_toStartOf="@+id/finish_note"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/finish_note"
         android:layout_width="160dp"
         android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="11dp"
+        android:layout_marginBottom="15dp"
         android:text="Finish"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="240dp"
-        tools:layout_editor_absoluteY="15dp" />
+        app:layout_constraintBottom_toTopOf="@+id/add_location"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/note_title"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/add_location"
         android:layout_width="160dp"
         android:layout_height="50dp"
+        android:layout_marginBottom="15dp"
         android:text="Add Location"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="240dp"
-        tools:layout_editor_absoluteY="80dp" />
+        app:layout_constraintBottom_toTopOf="@+id/view_location"
+        app:layout_constraintEnd_toEndOf="@id/finish_note"
+        app:layout_constraintStart_toStartOf="@id/finish_note"
+        app:layout_constraintTop_toBottomOf="@id/finish_note"/>
 
     <Button
         android:id="@+id/view_location"
         android:layout_width="160dp"
         android:layout_height="50dp"
+        android:layout_marginBottom="39dp"
         android:text="View Location"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="240dp"
-        tools:layout_editor_absoluteY="145dp" />
+        app:layout_constraintBottom_toTopOf="@+id/note"
+        app:layout_constraintEnd_toEndOf="@id/add_location"
+        app:layout_constraintStart_toStartOf="@id/add_location"
+        app:layout_constraintTop_toBottomOf="@id/add_location" />
 
     <EditText
         android:id="@+id/note"
-        android:layout_width="360dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="75dp"
+        android:background="@drawable/shape"
         android:hint="Write new note here"
         android:inputType="textMultiLine"
         android:lines="20"
         android:scrollbars="vertical"
-        android:background="@drawable/shape"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="29dp"
-        tools:layout_editor_absoluteY="234dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_location"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
