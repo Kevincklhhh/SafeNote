@@ -33,13 +33,14 @@ public class KeyManager {
     public static final String SHARED_PREFENCE = "SHARED_PREFENCE";
     public static final String IV = "IV";
     private static final String AES_MODE = "AES/GCM/NoPadding";
+
     private SecretKey getKey() throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, UnrecoverableEntryException, CertificateException, IOException {
         KeyStore ks = KeyStore.getInstance(ANDROID_KEY_STORE);
         ks.load(null);
         final KeyGenerator keyGenerator = KeyGenerator
                 .getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
-        if(!ks.containsAlias(KEY_ALIAS)) {
+        if (!ks.containsAlias(KEY_ALIAS)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 keyGenerator.init(new KeyGenParameterSpec.Builder(KEY_ALIAS,
                         KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
@@ -53,7 +54,8 @@ public class KeyManager {
         }
         return keyGenerator.generateKey();
     }
-//    private void generateRandomIV(Context ctx){
+
+    //    private void generateRandomIV(Context ctx){
 //        SharedPreferences pref = ctx.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
 //        String publicIV = pref.getString(IV, null);
 //        if(publicIV == null){
@@ -72,14 +74,14 @@ public class KeyManager {
         String iv = pref.getString(IV, null);
 
         c = Cipher.getInstance(AES_MODE);
-            try{
-                c.init(Cipher.ENCRYPT_MODE, getKey());
-                iv = Base64.encodeToString(c.getIV(), Base64.DEFAULT);
-                SharedPreferences.Editor edit = pref.edit();
-                edit.putString(IV, iv);
-                edit.apply();
-            } catch(Exception e){
-                e.printStackTrace();
+        try {
+            c.init(Cipher.ENCRYPT_MODE, getKey());
+            iv = Base64.encodeToString(c.getIV(), Base64.DEFAULT);
+            SharedPreferences.Editor edit = pref.edit();
+            edit.putString(IV, iv);
+            edit.apply();
+        } catch (Exception e) {
+            e.printStackTrace();
 
         }
         byte[] encodedBytes = c.doFinal(input);
@@ -91,13 +93,13 @@ public class KeyManager {
         Cipher c = null;
         SharedPreferences pref = context.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
         String iv = pref.getString(IV, null);
-            c = Cipher.getInstance(AES_MODE);
-            try{
-                c.init(Cipher.DECRYPT_MODE, getKey(),  new GCMParameterSpec(128,Base64.decode(iv, Base64.DEFAULT)));
+        c = Cipher.getInstance(AES_MODE);
+        try {
+            c.init(Cipher.DECRYPT_MODE, getKey(), new GCMParameterSpec(128, Base64.decode(iv, Base64.DEFAULT)));
 
-            } catch(Exception e){
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         byte[] decodedValue = Base64.decode(encrypted.getBytes("UTF-8"), Base64.DEFAULT);
         byte[] decryptedVal = c.doFinal(decodedValue);
         return new String(decryptedVal);
