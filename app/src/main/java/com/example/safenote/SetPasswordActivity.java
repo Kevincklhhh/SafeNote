@@ -65,7 +65,7 @@ public class SetPasswordActivity extends AppCompatActivity {
             myEdit.putString("password", "");
             myEdit.apply();
             try {
-                 decodedStoredPH = Base64.decode(storedPasswordHash.getBytes("UTF-8"), Base64.DEFAULT);
+                decodedStoredPH = Base64.decode(storedPasswordHash.getBytes("UTF-8"), Base64.DEFAULT);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -105,8 +105,8 @@ public class SetPasswordActivity extends AppCompatActivity {
 //                    e.printStackTrace();
 //                }
 
-            System.out.println("old password is"+decodedStoredPH);
-            System.out.println("Entered old password is"+oldPassword.getText().toString());
+            System.out.println("old password is" + decodedStoredPH);
+            System.out.println("Entered old password is" + oldPassword.getText().toString());
             if (!newPassword.getText().toString().equals(confirmPassword.getText().toString())) {
                 Toast.makeText(
                         getApplicationContext(),
@@ -122,7 +122,7 @@ public class SetPasswordActivity extends AppCompatActivity {
                 ).show();
             }
             try {
-                if (Arrays.equals(hashPassword(oldPassword.getText().toString()),decryptedstoredPH) || storedPasswordHash.equals("")) {//old password equals entered old password, or oldpassword is empty (meaning it's new user)
+                if (Arrays.equals(hashPassword(oldPassword.getText().toString()), decryptedstoredPH) || storedPasswordHash.equals("")) {//old password equals entered old password, or oldpassword is empty (meaning it's new user)
                     //System.out.println("entered=stored check passed, old password is" + storedPassword);
                     Toast.makeText(
                             getApplicationContext(),
@@ -155,7 +155,7 @@ public class SetPasswordActivity extends AppCompatActivity {
                     myEdit.apply();
                     System.out.println("new stored password is " + sh.getString("password", "(failed to get)"));
                 } else {
-                    System.out.println("Old password entered incorrectly, old password is "+storedPasswordHash);
+                    System.out.println("Old password entered incorrectly, old password is " + storedPasswordHash);
                     Toast.makeText(
                             getApplicationContext(),
                             "Old password entered incorrectly. Please try again!",

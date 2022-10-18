@@ -88,7 +88,7 @@ public class KeyManager {
         return encodedBytes;
     }
 
-    public  byte[] decrypt(Context context, byte[] encrypted) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
+    public byte[] decrypt(Context context, byte[] encrypted) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
         //generateRandomIV(context);
         Cipher c = null;
         SharedPreferences pref = context.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);

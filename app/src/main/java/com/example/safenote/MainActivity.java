@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        EditText passwordInput= findViewById(R.id.editTextTextPassword);//用户输密码
-        Button login =  findViewById(R.id.LoginButton);
+        EditText passwordInput = findViewById(R.id.editTextTextPassword);//用户输密码
+        Button login = findViewById(R.id.LoginButton);
         Context context = getApplicationContext();
         SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);
         SharedPreferences.Editor myEdit = sh.edit();
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 try {
-                    if (Arrays.equals(hashPassword(passwordInput.getText().toString()),decryptedstoredPH) || storedPasswordHash.equals("")) {
+                    if (Arrays.equals(hashPassword(passwordInput.getText().toString()), decryptedstoredPH) || storedPasswordHash.equals("")) {
                         Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
                         startActivity(intent);
                     }
