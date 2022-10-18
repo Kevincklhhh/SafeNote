@@ -83,7 +83,8 @@ public class NoteActivity extends AppCompatActivity {
             }
         });
 
-        String content=ReadFromInternalStorage("note.txt");
+        String content="";
+        content=ReadFromInternalStorage("note.txt");
         int separate=content.indexOf("\n");
         note_title.setText(content.substring(0,separate));
         note.setText(content.substring(separate+1,content.length()));
