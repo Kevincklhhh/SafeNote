@@ -25,6 +25,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 
 public class KeyManager {
     private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
@@ -39,7 +40,6 @@ public class KeyManager {
         final KeyGenerator keyGenerator = KeyGenerator
                 .getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
         if(!ks.containsAlias(KEY_ALIAS)) {
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 keyGenerator.init(new KeyGenParameterSpec.Builder(KEY_ALIAS,
                         KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
@@ -53,41 +53,47 @@ public class KeyManager {
         }
         return keyGenerator.generateKey();
     }
-    private void generateRandomIV(Context ctx){
-        SharedPreferences pref = ctx.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
-        String publicIV = pref.getString(IV, null);
-        if(publicIV == null){
-            SecureRandom random = new SecureRandom();
-            byte[] generated = random.generateSeed(12);
-            String generatedIVstr = Base64.encodeToString(generated, Base64.DEFAULT);
-            SharedPreferences.Editor edit = pref.edit();
-            edit.putString(IV, generatedIVstr);
-            edit.apply();
-        }
-    }
-    public String encrypt(Context context, String input) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, UnsupportedEncodingException {
-        generateRandomIV(context);
+//    private void generateRandomIV(Context ctx){
+//        SharedPreferences pref = ctx.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
+//        String publicIV = pref.getString(IV, null);
+//        if(publicIV == null){
+//            SecureRandom random = new SecureRandom();
+//            byte[] generated = random.generateSeed(12);
+//            String generatedIVstr = Base64.encodeToString(generated, Base64.DEFAULT);
+//            SharedPreferences.Editor edit = pref.edit();
+//            edit.putString(IV, generatedIVstr);
+//            edit.apply();
+//        }
+//    }
+    public byte[] encrypt(Context context, byte[] input) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, UnsupportedEncodingException {
+        //generateRandomIV(context);
         Cipher c = null;
         SharedPreferences pref = context.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
         String iv = pref.getString(IV, null);
+
         c = Cipher.getInstance(AES_MODE);
             try{
-                c.init(Cipher.ENCRYPT_MODE, getKey(), new GCMParameterSpec(128, Base64.decode(iv, Base64.DEFAULT)));
+                c.init(Cipher.ENCRYPT_MODE, getKey());
+                iv = Base64.encodeToString(c.getIV(), Base64.DEFAULT);
+                SharedPreferences.Editor edit = pref.edit();
+                edit.putString(IV, iv);
+                edit.apply();
             } catch(Exception e){
                 e.printStackTrace();
 
         }
-        byte[] encodedBytes = c.doFinal(input.getBytes("UTF-8"));
-        return Base64.encodeToString(encodedBytes, Base64.DEFAULT);
+        byte[] encodedBytes = c.doFinal(input);
+        return encodedBytes;
     }
+
     public String decrypt(Context context, String encrypted) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
-        generateRandomIV(context);
+        //generateRandomIV(context);
         Cipher c = null;
         SharedPreferences pref = context.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
         String iv = pref.getString(IV, null);
             c = Cipher.getInstance(AES_MODE);
             try{
-                c.init(Cipher.DECRYPT_MODE, getKey(), new GCMParameterSpec(128,Base64.decode(iv, Base64.DEFAULT)));
+                c.init(Cipher.DECRYPT_MODE, getKey(),  new GCMParameterSpec(128,Base64.decode(iv, Base64.DEFAULT)));
 
             } catch(Exception e){
                 e.printStackTrace();
