@@ -78,13 +78,15 @@ public class NoteActivity extends AppCompatActivity {
         Button finish = findViewById(R.id.finish_note);
         finish.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String content=note.getText().toString();
+                String content=note_title.getText().toString()+"\n"+note.getText().toString();
                 StorageToInternalStorage("note.txt",content);
             }
         });
 
         String content=ReadFromInternalStorage("note.txt");
-        note.setText(content);
+        int separate=content.indexOf("\n");
+        note_title.setText(content.substring(0,separate));
+        note.setText(content.substring(separate+1,content.length()));
 
     }
 
