@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -74,9 +75,16 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     try {
-                        if (Arrays.equals(hashPassword(passwordInput.getText().toString()), decryptedstoredPH) || decryptedstoredPH.equals("")) {
+                        if (Arrays.equals(hashPassword(passwordInput.getText().toString()), decryptedstoredPH)) {
                             Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
                             startActivity(intent);
+                        }else{
+                            System.out.println("wrong password");
+                            Toast.makeText(
+                                    getApplicationContext(),
+                                    "Wrong Password!",
+                                    Toast.LENGTH_SHORT
+                            ).show();
                         }
                     } catch (NoSuchAlgorithmException e) {
                         e.printStackTrace();
