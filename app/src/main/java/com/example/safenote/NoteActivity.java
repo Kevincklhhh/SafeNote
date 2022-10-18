@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -32,21 +33,30 @@ import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
 public class NoteActivity extends AppCompatActivity {
 
     private LocationRequest locationRequest;
     private double latitude,longitude;
+    EditText note,note_title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note);
-        Button addLocation = findViewById(R.id.add_location);
+
+        note=findViewById(R.id.note);
+        note_title=findViewById(R.id.note_title);
 
         LocationRequest.Builder Build=new LocationRequest.Builder(5000);
         Build.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
         locationRequest=Build.build();
 
+        Button addLocation = findViewById(R.id.add_location);
         addLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getLocation();
@@ -57,6 +67,7 @@ public class NoteActivity extends AppCompatActivity {
         viewLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String location= "geo:"+String.valueOf(latitude)+String.valueOf(longitude);
+                System.out.println(location);
                 Uri gmmIntentUri = Uri.parse(location);
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
@@ -67,13 +78,45 @@ public class NoteActivity extends AppCompatActivity {
         });
 
         Button finish = findViewById(R.id.finish_note);
-        viewLocation.setOnClickListener(new View.OnClickListener() {
+        finish.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //TODO store the note
+                String content=note.getText().toString();
+                StorageToInternalStorage("note.txt",content);
             }
         });
 
+        String content=ReadFromInternalStorage("note.txt");
+        note.setText(content);
+
     }
+
+    private void StorageToInternalStorage(String fileName, String content) {
+        File path=getApplicationContext().getFilesDir();
+        try {
+            FileOutputStream writer=new FileOutputStream(new File(path,fileName));
+            writer.write(content.getBytes());
+            writer.close();
+            Toast.makeText(getApplicationContext(),"Wrote to file: "+fileName,Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String ReadFromInternalStorage(String fileName){
+        File path=getApplicationContext().getFilesDir();
+        File place=new File(path,fileName);
+        byte[] content=new byte[(int) place.length()];
+        try {
+            FileInputStream reader=new FileInputStream(place);
+            reader.read(content);
+            return new String(content);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return e.toString();
+        }
+    }
+
 
     private boolean GPSEnable(){
         LocationManager locationManager=null;
