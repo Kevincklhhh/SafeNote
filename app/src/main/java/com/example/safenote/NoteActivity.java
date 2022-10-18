@@ -67,7 +67,8 @@ public class NoteActivity extends AppCompatActivity {
         locationRequest = Build.build();
 
         SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);
-        KeyManager km = new KeyManager();
+        KeyManager kmlat = new KeyManager("latIV");
+        KeyManager kmlong = new KeyManager("longIV");
         Button addLocation = findViewById(R.id.add_location);
         addLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -83,8 +84,8 @@ public class NoteActivity extends AppCompatActivity {
                 String decryptedlatitude = null;
                 String decryptedlongitude = null;
                 try {
-                    decryptedlatitude = Base64.encodeToString(km.decrypt(getApplicationContext(),Base64.decode(storedLatitude.getBytes("UTF-8"), Base64.DEFAULT)), Base64.DEFAULT);
-                    decryptedlongitude = Base64.encodeToString(km.decrypt(getApplicationContext(),Base64.decode(storedLongitude.getBytes("UTF-8"), Base64.DEFAULT)), Base64.DEFAULT);
+                    decryptedlatitude = Base64.encodeToString(kmlat.decrypt(getApplicationContext(),Base64.decode(storedLatitude.getBytes("UTF-8"), Base64.DEFAULT)), Base64.DEFAULT);
+                    decryptedlongitude = Base64.encodeToString(kmlong.decrypt(getApplicationContext(),Base64.decode(storedLongitude.getBytes("UTF-8"), Base64.DEFAULT)), Base64.DEFAULT);
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 } catch (NoSuchPaddingException e) {
@@ -202,7 +203,8 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     private void getLocation() {
-        KeyManager km = new KeyManager();
+        KeyManager kmlat = new KeyManager("latIV");
+        KeyManager kmlong = new KeyManager("longIV");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(NoteActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 if (GPSEnable()) {
@@ -221,8 +223,8 @@ public class NoteActivity extends AppCompatActivity {
                                         String latToStore = null;
                                         String longToStore = null;
                                         try {
-                                            latToStore = Base64.encodeToString(km.encrypt(getApplicationContext(), latString.getBytes("UTF-8")), Base64.DEFAULT);
-                                            longToStore= Base64.encodeToString(km.encrypt(getApplicationContext(), longString.getBytes("UTF-8")), Base64.DEFAULT);
+                                            latToStore = Base64.encodeToString(kmlat.encrypt(getApplicationContext(), latString.getBytes("UTF-8")), Base64.DEFAULT);
+                                            longToStore= Base64.encodeToString(kmlong.encrypt(getApplicationContext(), longString.getBytes("UTF-8")), Base64.DEFAULT);
                                         } catch (NoSuchAlgorithmException e) {
                                             e.printStackTrace();
                                         } catch (NoSuchPaddingException e) {

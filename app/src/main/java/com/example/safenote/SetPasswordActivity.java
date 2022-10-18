@@ -41,8 +41,8 @@ public class SetPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);
         SharedPreferences.Editor myEdit = sh.edit();
-            myEdit.putString("password", "");
-            myEdit.apply();
+//            myEdit.putString("password", "");
+//            myEdit.apply();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_password);
         bindViews();
@@ -61,7 +61,7 @@ public class SetPasswordActivity extends AppCompatActivity {
         buttonSubmit.setOnClickListener(view -> {
             byte[] decodedStoredPH = null;
             byte[] decryptedstoredPH = null;
-            KeyManager km = new KeyManager();
+            KeyManager km = new KeyManager("passwordIV");
             SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);//store password in shared preference
             String storedPasswordHash = sh.getString("password", "");
             SharedPreferences.Editor myEdit = sh.edit();

@@ -43,19 +43,23 @@ public class MainActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);
         SharedPreferences.Editor myEdit = sh.edit();
+        //Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
+        //startActivity(intent);
+
         login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {// TODO: Check password correspondence
                 byte[] decodedStoredPH = null;
                 byte[] decryptedstoredPH = null;
-                KeyManager km = new KeyManager();
+                KeyManager km = new KeyManager("passwordIV");
                 SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);//store password in shared preference
                 String storedPasswordHash = sh.getString("password", "");
                 if (storedPasswordHash.equals("")) {
                     Toast.makeText(
                             getApplicationContext(),
-                            "Please set a  password!",
+                            "Please set a password!",
                             Toast.LENGTH_SHORT
                     ).show();
+                    System.out.println("Please set a password!");
                 } else if(passwordInput.getText().toString().equals("")){
                     Toast.makeText(
                             getApplicationContext(),
@@ -86,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     try {
                         if (Arrays.equals(hashPassword(passwordInput.getText().toString()), decryptedstoredPH)) {
+                            System.out.println("hash compare passed");
                             Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
                             startActivity(intent);
                         }else{
@@ -106,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         Button setPassword = findViewById(R.id.SetPasswordButton);
         setPassword.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {// TODO: Check password correspondence
+                System.out.println(sh.getAll());
                 Intent intent = new Intent(getApplicationContext(), SetPasswordActivity.class);
                 startActivity(intent);
             }

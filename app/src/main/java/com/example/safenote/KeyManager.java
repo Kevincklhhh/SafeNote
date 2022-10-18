@@ -10,6 +10,7 @@ import android.util.Base64;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -30,10 +31,13 @@ import javax.crypto.spec.IvParameterSpec;
 public class KeyManager {
     private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
     private static final String KEY_ALIAS = "Alias";
-    public static final String SHARED_PREFENCE = "SHARED_PREFENCE";
-    public static final String IV = "IV";
+    public static final String SHARED_PREFENCE = "shared_preference";
+    //public static final String IV = "IV";
     private static final String AES_MODE = "AES/GCM/NoPadding";
-
+    private String IV;
+    public KeyManager (String iv){
+        IV = iv;
+    }
     private SecretKey getKey() throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, UnrecoverableEntryException, CertificateException, IOException {
         KeyStore ks = KeyStore.getInstance(ANDROID_KEY_STORE);
