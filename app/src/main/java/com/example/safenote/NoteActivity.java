@@ -66,21 +66,18 @@ public class NoteActivity extends AppCompatActivity {
         Button viewLocation = findViewById(R.id.view_location);
         viewLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String location= "geo:"+String.valueOf(latitude)+String.valueOf(longitude);
-                System.out.println(location);
+                String location= "geo:"+String.valueOf(latitude)+","+String.valueOf(longitude);
+                //System.out.println(location);
                 Uri gmmIntentUri = Uri.parse(location);
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
-                if (mapIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(mapIntent);
-                }
+                startActivity(mapIntent);
             }
         });
 
         Button finish = findViewById(R.id.finish_note);
         finish.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //TODO store the note
                 String content=note.getText().toString();
                 StorageToInternalStorage("note.txt",content);
             }
@@ -172,8 +169,8 @@ public class NoteActivity extends AppCompatActivity {
                                         int index=locationResult.getLocations().size()-1;
                                         latitude=locationResult.getLocations().get(index).getLatitude();
                                         longitude=locationResult.getLocations().get(index).getLongitude();
-                                        System.out.println(latitude);
-                                        System.out.println(longitude);
+                                        //System.out.println(latitude);
+                                        //System.out.println(longitude);
                                     }
                                 }
                             }, Looper.getMainLooper());
