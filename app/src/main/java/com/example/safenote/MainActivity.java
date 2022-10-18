@@ -51,9 +51,19 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);//store password in shared preference
                 String storedPasswordHash = sh.getString("password", "");
                 if (storedPasswordHash.equals("")) {
-                    Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
-                    startActivity(intent);
-                } else {
+                    Toast.makeText(
+                            getApplicationContext(),
+                            "Please set a  password!",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                } else if(passwordInput.getText().toString().equals("")){
+                    Toast.makeText(
+                            getApplicationContext(),
+                            "Please enter a non-empty password!",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
+                else {
                     try {
                         decodedStoredPH = Base64.decode(storedPasswordHash.getBytes("UTF-8"), Base64.DEFAULT);
                     } catch (UnsupportedEncodingException e) {

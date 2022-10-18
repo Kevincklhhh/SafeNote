@@ -64,9 +64,9 @@ public class SetPasswordActivity extends AppCompatActivity {
             KeyManager km = new KeyManager();
             SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);//store password in shared preference
             String storedPasswordHash = sh.getString("password", "");
-//            SharedPreferences.Editor myEdit = sh.edit();
-//            myEdit.putString("password", "");
-//            myEdit.apply();
+            SharedPreferences.Editor myEdit = sh.edit();
+            myEdit.putString("password", "");
+            myEdit.apply();
 
 //                try {
 //                    SharedPreferences.Editor myEdit = sh.edit();
@@ -132,7 +132,7 @@ public class SetPasswordActivity extends AppCompatActivity {
                 } catch (NoSuchProviderException e) {
                     e.printStackTrace();
                 }
-                SharedPreferences.Editor myEdit = sh.edit();
+                //SharedPreferences.Editor myEdit = sh.edit();
                 myEdit.putString("password", toStore);
                 myEdit.apply();
                 System.out.println("new stored password is " + sh.getString("password", "(failed to get)"));
@@ -189,7 +189,7 @@ public class SetPasswordActivity extends AppCompatActivity {
                         } catch (NoSuchProviderException e) {
                             e.printStackTrace();
                         }
-                        SharedPreferences.Editor myEdit = sh.edit();
+                        //SharedPreferences.Editor myEdit = sh.edit();
                         myEdit.putString("password", toStore);
                         myEdit.apply();
                         System.out.println("new stored password is " + sh.getString("password", "(failed to get)"));
