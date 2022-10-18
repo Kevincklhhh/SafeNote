@@ -25,6 +25,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 
 public class KeyManager {
     private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
@@ -66,13 +67,18 @@ public class KeyManager {
         }
     }
     public String encrypt(Context context, String input) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, UnsupportedEncodingException {
-        generateRandomIV(context);
+        //generateRandomIV(context);
         Cipher c = null;
         SharedPreferences pref = context.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
         String iv = pref.getString(IV, null);
+
         c = Cipher.getInstance(AES_MODE);
             try{
-                c.init(Cipher.ENCRYPT_MODE, getKey(), new GCMParameterSpec(128, Base64.decode(iv, Base64.DEFAULT)));
+                c.init(Cipher.ENCRYPT_MODE, getKey());
+                iv = Base64.encodeToString(c.getIV(), Base64.DEFAULT);
+                SharedPreferences.Editor edit = pref.edit();
+                edit.putString(IV, iv);
+                edit.apply();
             } catch(Exception e){
                 e.printStackTrace();
 
@@ -87,7 +93,7 @@ public class KeyManager {
         String iv = pref.getString(IV, null);
             c = Cipher.getInstance(AES_MODE);
             try{
-                c.init(Cipher.DECRYPT_MODE, getKey(), new GCMParameterSpec(128,Base64.decode(iv, Base64.DEFAULT)));
+                c.init(Cipher.DECRYPT_MODE, getKey(),  new GCMParameterSpec(128,Base64.decode(iv, Base64.DEFAULT)));
 
             } catch(Exception e){
                 e.printStackTrace();

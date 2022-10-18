@@ -73,7 +73,7 @@ public class SetPasswordActivity extends AppCompatActivity {
                     myEdit.apply();
                     String storedhahaha = sh.getString("password", "");
                     System.out.println(storedhahaha);
-                    System.out.println(km.decrypt(getApplicationContext(),"hahaha"));
+                    System.out.println(km.decrypt(getApplicationContext(),storedhahaha));
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 } catch (NoSuchPaddingException e) {
