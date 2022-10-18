@@ -65,7 +65,7 @@ public class KeyManager {
 //            edit.apply();
 //        }
 //    }
-    public String encrypt(Context context, String input) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, UnsupportedEncodingException {
+    public byte[] encrypt(Context context, byte[] input) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, UnsupportedEncodingException {
         //generateRandomIV(context);
         Cipher c = null;
         SharedPreferences pref = context.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
@@ -82,8 +82,8 @@ public class KeyManager {
                 e.printStackTrace();
 
         }
-        byte[] encodedBytes = c.doFinal(input.getBytes("UTF-8"));
-        return Base64.encodeToString(encodedBytes, Base64.DEFAULT);
+        byte[] encodedBytes = c.doFinal(input);
+        return encodedBytes;
     }
 
     public String decrypt(Context context, String encrypted) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {

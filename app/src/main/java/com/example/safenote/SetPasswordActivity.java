@@ -100,12 +100,22 @@ public class SetPasswordActivity extends AppCompatActivity {
                     String newPasswordString = newPassword.getText().toString();//store the password in shared preference as key-value pair
                     byte[] hashed = null;
                     String toStore = null;
-
+                    byte [] EncryptedByte = null;
                     try {
                         hashed = hashPassword(newPasswordString);
-                        EncryptedByte
+                        EncryptedByte = km.encrypt(getApplicationContext(), hashed);
                          toStore = Base64.encodeToString(hashed, Base64.DEFAULT);
                     } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchPaddingException e) {
+                        e.printStackTrace();
+                    } catch (IllegalBlockSizeException e) {
+                        e.printStackTrace();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (BadPaddingException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchProviderException e) {
                         e.printStackTrace();
                     }
                     SharedPreferences.Editor myEdit = sh.edit();
