@@ -39,6 +39,10 @@ public class SetPasswordActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);
+        SharedPreferences.Editor myEdit = sh.edit();
+            myEdit.putString("password", "");
+            myEdit.apply();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_password);
         bindViews();
@@ -55,7 +59,6 @@ public class SetPasswordActivity extends AppCompatActivity {
     private void setButtonSubmit() {
         this.buttonSubmit = findViewById(R.id.buttonSubmit);
         buttonSubmit.setOnClickListener(view -> {
-            // TODO: add keystore steps here, not storing password in plaintext
             byte[] decodedStoredPH = null;
             byte[] decryptedstoredPH = null;
             KeyManager km = new KeyManager();

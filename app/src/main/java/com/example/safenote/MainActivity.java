@@ -49,35 +49,40 @@ public class MainActivity extends AppCompatActivity {
                 KeyManager km = new KeyManager();
                 SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);//store password in shared preference
                 String storedPasswordHash = sh.getString("password", "");
-                try {
-                    decodedStoredPH = Base64.decode(storedPasswordHash.getBytes("UTF-8"), Base64.DEFAULT);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    decryptedstoredPH = km.decrypt(getApplicationContext(), decodedStoredPH);
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (NoSuchPaddingException e) {
-                    e.printStackTrace();
-                } catch (NoSuchProviderException e) {
-                    e.printStackTrace();
-                } catch (BadPaddingException e) {
-                    e.printStackTrace();
-                } catch (IllegalBlockSizeException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    if (Arrays.equals(hashPassword(passwordInput.getText().toString()), decryptedstoredPH) || storedPasswordHash.equals("")) {
-                        Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
-                        startActivity(intent);
+                if (storedPasswordHash.equals("")) {
+                    Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
+                    startActivity(intent);
+                } else {
+                    try {
+                        decodedStoredPH = Base64.decode(storedPasswordHash.getBytes("UTF-8"), Base64.DEFAULT);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
                     }
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
+                    try {
+                        decryptedstoredPH = km.decrypt(getApplicationContext(), decodedStoredPH);
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchPaddingException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchProviderException e) {
+                        e.printStackTrace();
+                    } catch (BadPaddingException e) {
+                        e.printStackTrace();
+                    } catch (IllegalBlockSizeException e) {
+                        e.printStackTrace();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        if (Arrays.equals(hashPassword(passwordInput.getText().toString()), decryptedstoredPH) || decryptedstoredPH.equals("")) {
+                            Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
+                            startActivity(intent);
+                        }
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
 
+                }
             }
         });
         Button setPassword = findViewById(R.id.SetPasswordButton);
