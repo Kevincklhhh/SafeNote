@@ -128,8 +128,8 @@ public class NoteActivity extends AppCompatActivity {
                 String decryptedlatitude = null;
                 String decryptedlongitude = null;
                 try {
-                    decryptedlatitude = Base64.encodeToString(kmlat.decrypt(getApplicationContext(), Base64.decode(storedLatitude.getBytes("UTF-8"), Base64.DEFAULT)), Base64.DEFAULT);
-                    decryptedlongitude = Base64.encodeToString(kmlong.decrypt(getApplicationContext(), Base64.decode(storedLongitude.getBytes("UTF-8"), Base64.DEFAULT)), Base64.DEFAULT);
+                    decryptedlatitude = new String(kmlat.decrypt(getApplicationContext(), Base64.decode(storedLatitude.getBytes("UTF-8"), Base64.DEFAULT)));
+                    decryptedlongitude = new String(kmlong.decrypt(getApplicationContext(), Base64.decode(storedLongitude.getBytes("UTF-8"), Base64.DEFAULT)));
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 } catch (NoSuchPaddingException e) {
@@ -289,7 +289,7 @@ public class NoteActivity extends AppCompatActivity {
                                         latitude = locationResult.getLocations().get(index).getLatitude();
                                         longitude = locationResult.getLocations().get(index).getLongitude();
                                         String latString = latitude + "";
-                                        String longString = latitude + "";
+                                        String longString = longitude + "";
                                         String latToStore = null;
                                         String longToStore = null;
                                         try {
@@ -313,8 +313,6 @@ public class NoteActivity extends AppCompatActivity {
                                         myEdit.putString("longitude", longToStore);
                                         myEdit.putString("latitude", latToStore);
                                         myEdit.apply();
-                                        //System.out.println(latitude);
-                                        //System.out.println(longitude);
                                     }
                                 }
                             }, Looper.getMainLooper());
