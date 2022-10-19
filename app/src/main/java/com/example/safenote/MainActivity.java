@@ -5,6 +5,7 @@ import static com.example.safenote.SetPasswordActivity.hashPassword;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -42,6 +43,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,11 +54,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        EditText passwordInput = findViewById(R.id.editTextTextPassword);//用户输密码
+        EditText passwordInput = findViewById(R.id.editTextTextPassword);
         Button login = findViewById(R.id.LoginButton);
         Context context = getApplicationContext();
         SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);
         SharedPreferences.Editor myEdit = sh.edit();
+//        myEdit.clear();
+//        myEdit.apply();
         Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
         startActivity(intent);
 
@@ -185,66 +189,29 @@ public class MainActivity extends AppCompatActivity {
                 }
                 //key = keyGenerator.generateKey();
                 SharedPreferences pref = getSharedPreferences("shared_preference", Context.MODE_PRIVATE);
-                String latString = "100";
-                String iv;
-                byte[] encryptedBytes = new byte[0];
+                Cipher cipher = null;
                 try {
-                    Cipher encryptC = Cipher.getInstance(AES_MODE);
-                    try {
-                        encryptC.init(Cipher.ENCRYPT_MODE, key);
-                        iv = Base64.encodeToString(encryptC.getIV(), Base64.DEFAULT);
-                        SharedPreferences.Editor edit = pref.edit();
-                        edit.putString("testIV", iv);
-                        edit.apply();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    byte[] encodedBytes = latString.getBytes("UTF-8");
-                    encryptedBytes = encryptC.doFinal(latString.getBytes("UTF-8"));
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (NoSuchPaddingException | UnsupportedEncodingException | BadPaddingException | IllegalBlockSizeException e) {
-                    e.printStackTrace();
-                }
-
-                String latIv = pref.getString("latIV", null);
-                String testIv = pref.getString("testIV", null);
-                Cipher latC = null;
-                String longIv = pref.getString("longIV", null);
-                Cipher longC = null;
-                System.out.println(pref.getAll());
-                byte[] decryptedLong = new byte[0];
-                byte[] decryptedLat = new byte[0];
-
-                try {
-                    byte[] decodedLat = Base64.decode(storedLatitude.getBytes("UTF-8"), Base64.DEFAULT);
-                    byte[] decodedLong = Base64.decode(storedLongitude.getBytes("UTF-8"), Base64.DEFAULT);
-                    latC = Cipher.getInstance(AES_MODE);
-                    try {
-                        latC.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(128, Base64.decode(testIv, Base64.DEFAULT)));
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    decryptedLat = latC.doFinal(encryptedBytes);
-                    //decryptedlatitude = Base64.encodeToString(kmlat.decrypt(getApplicationContext(),Base64.decode(storedLatitude.getBytes("UTF-8"), Base64.DEFAULT)), Base64.DEFAULT);
-                    //decryptedlongitude = Base64.encodeToString(kmlong.decrypt(getApplicationContext(),Base64.decode(storedLongitude.getBytes("UTF-8"), Base64.DEFAULT)), Base64.DEFAULT);
+                    cipher = Cipher.getInstance(AES_MODE);
+                    cipher.init(Cipher.ENCRYPT_MODE, key);
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 } catch (NoSuchPaddingException e) {
                     e.printStackTrace();
-                } catch (BadPaddingException e) {
-                    e.printStackTrace();
-                } catch (IllegalBlockSizeException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
+                } catch (InvalidKeyException e) {
                     e.printStackTrace();
                 }
-                //System.out.println(decryptedLong);
-                //System.out.println(decryptedLat);
-
-                double latitude = Double.parseDouble(decryptedlatitude);
-                double longitude = Double.parseDouble(decryptedlongitude);
+                String testStoreIV = null;
+                byte[] testdecodeIV = null;
+                IvParameterSpec latIvParameterSpec = new IvParameterSpec(cipher.getIV());
+                byte[] testgetIV = latIvParameterSpec.getIV();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    testStoreIV = java.util.Base64.getEncoder()
+                            .encodeToString(latIvParameterSpec.getIV());
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    testdecodeIV = java.util.Base64.getDecoder()
+                            .decode(testStoreIV);
+                }
 
 
 //                System.out.println(sh.getAll());
