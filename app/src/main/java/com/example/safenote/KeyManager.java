@@ -8,8 +8,10 @@ import android.security.keystore.KeyProperties;
 import android.util.Base64;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -24,6 +26,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SealedObject;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
@@ -32,7 +35,6 @@ public class KeyManager {
     private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
     private static final String KEY_ALIAS = "Alias";
     public static final String SHARED_PREFENCE = "shared_preference";
-    //public static final String IV = "IV";
     private static final String AES_MODE = "AES/GCM/NoPadding";
     private String IV;
     public KeyManager (String iv){
@@ -58,6 +60,7 @@ public class KeyManager {
         }
         return keyGenerator.generateKey();
     }
+
 
     //    private void generateRandomIV(Context ctx){
 //        SharedPreferences pref = ctx.getSharedPreferences(SHARED_PREFENCE, Context.MODE_PRIVATE);
