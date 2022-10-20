@@ -45,6 +45,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
 import java.security.KeyStore;
@@ -103,12 +104,13 @@ public class NoteActivity extends AppCompatActivity {
         Build.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
         locationRequest = Build.build();
 
-        SecretKey k = null;
-        try {
-            k = getKey();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        SecretKey k = null;
+        KeyManager keyManager = new KeyManager("noteIV");
+//        try {
+//            k = keyManager.getKey();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);
         KeyManager kmlat = new KeyManager("latIV");
@@ -155,20 +157,14 @@ public class NoteActivity extends AppCompatActivity {
         });
 
         Button finish = findViewById(R.id.finish_note);
-        SecretKey finalK = k;
+//        SecretKey finalK = k;
         finish.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String content = note_title.getText().toString() + "\n" + note.getText().toString();
 //                StorageToInternalStorage("note.txt", content);
                 try {
-                    Cipher aes = Cipher.getInstance("AES/ECB/PKCS5Padding");
-                    aes.init(Cipher.ENCRYPT_MODE, finalK);
-                    String fileName = "note.txt";
-                    FileOutputStream fs = new FileOutputStream(fileName);
-                    CipherOutputStream out = new CipherOutputStream(fs, aes);
-                    out.write(content.getBytes());
-                    out.flush();
-                    out.close();
+                    byte[] encrypted = keyManager.encrypt(getApplicationContext(), content.getBytes(StandardCharsets.UTF_8));
+                    StorageToInternalStorage("note", encrypted);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -176,37 +172,35 @@ public class NoteActivity extends AppCompatActivity {
 
         });
 
+        // decode
         String content = "\n";
         try {
-//            content = ReadFromInternalStorage("note.txt");
-            Cipher aes2 = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            aes2.init(Cipher.DECRYPT_MODE, k);
-
-            FileInputStream fis = new FileInputStream("note.txt");
-            CipherInputStream in = new CipherInputStream(fis, aes2);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] b = new byte[1024];
-            int numberOfBytedRead;
-            while ((numberOfBytedRead = in.read(b)) >= 0) {
-                baos.write(b, 0, numberOfBytedRead);
-            }
-            content = new String(baos.toByteArray());
+            byte[] encrypted = ReadFromInternalStorage("note");
+            if (encrypted == null) content = "\n";
+            else content = keyManager.decrypt(getApplicationContext(), encrypted).toString();
         } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println("content is" + content);
         if (content.length() == 0) content = "\n";
         int separate = content.indexOf("\n");
+        if (separate < 0) {
+            System.out.println("Decode fails");
+            content = "\n";
+            separate = 0;
+        }
+        System.out.println(content);
         note_title.setText(content.substring(0, separate));
         note.setText(content.substring(separate + 1, content.length()));
 
     }
 
-    private void StorageToInternalStorage(String fileName, String content) {
+    private void StorageToInternalStorage(String fileName, byte[] content) {
         File path = getApplicationContext().getFilesDir();
         try {
             FileOutputStream writer = new FileOutputStream(new File(path, fileName));
-            writer.write(content.getBytes());
+//            writer.write(content.getBytes());
+            writer.write(content);
             writer.close();
             Toast.makeText(getApplicationContext(), "Wrote to file: " + fileName, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
@@ -214,7 +208,7 @@ public class NoteActivity extends AppCompatActivity {
         }
     }
 
-    private String ReadFromInternalStorage(String fileName) throws IOException {
+    private byte[] ReadFromInternalStorage(String fileName) throws IOException {
         File path = getApplicationContext().getFilesDir();
         File place = new File(path, fileName);
         byte[] content = new byte[(int) place.length()];
@@ -224,10 +218,10 @@ public class NoteActivity extends AppCompatActivity {
         try {
             FileInputStream reader = new FileInputStream(place);
             reader.read(content);
-            return new String(content);
+            return content;
         } catch (Exception e) {
             e.printStackTrace();
-            return e.toString();
+            return null;
         }
     }
 
