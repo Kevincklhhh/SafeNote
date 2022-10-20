@@ -104,13 +104,7 @@ public class NoteActivity extends AppCompatActivity {
         Build.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
         locationRequest = Build.build();
 
-//        SecretKey k = null;
         KeyManager keyManager = new KeyManager("noteIV");
-//        try {
-//            k = keyManager.getKey();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
 
         SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);
         KeyManager kmlat = new KeyManager("latIV");
@@ -157,7 +151,6 @@ public class NoteActivity extends AppCompatActivity {
         });
 
         Button finish = findViewById(R.id.finish_note);
-//        SecretKey finalK = k;
         finish.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String content = note_title.getText().toString() + "\n" + note.getText().toString();
@@ -165,7 +158,6 @@ public class NoteActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Save failed: Title cannot contain multiple lines!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-//                StorageToInternalStorage("note.txt", content);
                 try {
                     byte[] encrypted = keyManager.encrypt(getApplicationContext(), content.getBytes(StandardCharsets.UTF_8));
                     StorageToInternalStorage("note", encrypted);
@@ -186,7 +178,7 @@ public class NoteActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("content is" + content);
+//        System.out.println("content is" + content);
         if (content.length() == 0) content = "\n";
         int separate = content.indexOf("\n");
         if (separate < 0) {
@@ -194,7 +186,6 @@ public class NoteActivity extends AppCompatActivity {
             content = "\n";
             separate = 0;
         }
-        System.out.println(content);
         note_title.setText(content.substring(0, separate));
         note.setText(content.substring(separate + 1, content.length()));
 
@@ -204,7 +195,6 @@ public class NoteActivity extends AppCompatActivity {
         File path = getApplicationContext().getFilesDir();
         try {
             FileOutputStream writer = new FileOutputStream(new File(path, fileName));
-//            writer.write(content.getBytes());
             writer.write(content);
             writer.close();
             Toast.makeText(getApplicationContext(), "Wrote to file: " + fileName, Toast.LENGTH_SHORT).show();
