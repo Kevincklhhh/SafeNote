@@ -177,7 +177,7 @@ public class NoteActivity extends AppCompatActivity {
         try {
             byte[] encrypted = ReadFromInternalStorage("note");
             if (encrypted == null) content = "\n";
-            else content = keyManager.decrypt(getApplicationContext(), encrypted).toString();
+            else content = new String(keyManager.decrypt(getApplicationContext(), encrypted), StandardCharsets.UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
         }
