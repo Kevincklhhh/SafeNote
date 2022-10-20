@@ -161,6 +161,10 @@ public class NoteActivity extends AppCompatActivity {
         finish.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String content = note_title.getText().toString() + "\n" + note.getText().toString();
+                if (note_title.getText().toString().indexOf('\n') >= 0) {
+                    Toast.makeText(getApplicationContext(), "Save failed: Title cannot contain multiple lines!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 //                StorageToInternalStorage("note.txt", content);
                 try {
                     byte[] encrypted = keyManager.encrypt(getApplicationContext(), content.getBytes(StandardCharsets.UTF_8));
@@ -177,7 +181,8 @@ public class NoteActivity extends AppCompatActivity {
         try {
             byte[] encrypted = ReadFromInternalStorage("note");
             if (encrypted == null) content = "\n";
-            else content = new String(keyManager.decrypt(getApplicationContext(), encrypted), StandardCharsets.UTF_8);
+            else
+                content = new String(keyManager.decrypt(getApplicationContext(), encrypted), StandardCharsets.UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
         }
