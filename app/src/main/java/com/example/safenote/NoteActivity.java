@@ -142,7 +142,6 @@ public class NoteActivity extends AppCompatActivity {
                 latitude = Double.parseDouble(decryptedlatitude);
                 longitude = Double.parseDouble(decryptedlongitude);
                 String location = "geo:" + String.valueOf(latitude) + "," + String.valueOf(longitude);
-                //System.out.println(location);
                 Uri gmmIntentUri = Uri.parse(location);
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
@@ -165,7 +164,7 @@ public class NoteActivity extends AppCompatActivity {
             }
         });
 
-        // decode
+
         String content = "\n";
         try {
             byte[] encrypted = ReadFromInternalStorage("note");
@@ -175,7 +174,6 @@ public class NoteActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        System.out.println("content is" + content);
         if (content.length() == 0) content = "\n";
         int separate = content.indexOf("\n");
         if (separate < 0) {

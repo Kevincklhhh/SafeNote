@@ -41,8 +41,6 @@ public class SetPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);
         SharedPreferences.Editor myEdit = sh.edit();
-//            myEdit.putString("password", "");
-//            myEdit.apply();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_password);
         bindViews();
@@ -68,26 +66,6 @@ public class SetPasswordActivity extends AppCompatActivity {
             myEdit.putString("password", "");
             myEdit.apply();
 
-//                try {
-//                    SharedPreferences.Editor myEdit = sh.edit();
-//                    myEdit.putString("password", km.encrypt(getApplicationContext(),"hahaha"));
-//                    myEdit.apply();
-//                    String storedhahaha = sh.getString("password", "");
-//                    System.out.println(storedhahaha);
-//                    System.out.println(km.decrypt(getApplicationContext(),storedhahaha));
-//                } catch (NoSuchAlgorithmException e) {
-//                    e.printStackTrace();
-//                } catch (NoSuchPaddingException e) {
-//                    e.printStackTrace();
-//                } catch (NoSuchProviderException e) {
-//                    e.printStackTrace();
-//                } catch (BadPaddingException e) {
-//                    e.printStackTrace();
-//                } catch (IllegalBlockSizeException e) {
-//                    e.printStackTrace();
-//                } catch (UnsupportedEncodingException e) {
-//                    e.printStackTrace();
-//                }
 
             if (!newPassword.getText().toString().equals(confirmPassword.getText().toString())) {
                 Toast.makeText(
@@ -132,13 +110,10 @@ public class SetPasswordActivity extends AppCompatActivity {
                 } catch (NoSuchProviderException e) {
                     e.printStackTrace();
                 }
-                //SharedPreferences.Editor myEdit = sh.edit();
                 myEdit.putString("password", toStore);
                 myEdit.apply();
-                System.out.println("new stored password is " + sh.getString("password", "(failed to get)"));
             }
             else {
-                System.out.println("is it executed else");
                 try {
                     decodedStoredPH = Base64.decode(storedPasswordHash.getBytes("UTF-8"), Base64.DEFAULT);
                 } catch (UnsupportedEncodingException e) {
@@ -162,7 +137,6 @@ public class SetPasswordActivity extends AppCompatActivity {
                 try {
                     if (Arrays.equals(hashPassword(oldPassword.getText().toString()), decryptedstoredPH)) {//old password equals entered old password, or oldpassword is empty (meaning it's new user)
 
-                        //System.out.println("entered=stored check passed, old password is" + storedPassword);
                         Toast.makeText(
                                 getApplicationContext(),
                                 "Changed Password successfully!",

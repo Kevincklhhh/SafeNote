@@ -59,13 +59,10 @@ public class MainActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);
         SharedPreferences.Editor myEdit = sh.edit();
-//        myEdit.clear();
-//        myEdit.apply();
-        Intent intent = new Intent(getApplicationContext(), NoteActivity.class);
-        startActivity(intent);
+
 
         login.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {// TODO: Check password correspondence
+            public void onClick(View v) {
                 byte[] decodedStoredPH = null;
                 byte[] decryptedstoredPH = null;
                 KeyManager km = new KeyManager("passwordIV");
@@ -128,95 +125,9 @@ public class MainActivity extends AppCompatActivity {
         });
         Button setPassword = findViewById(R.id.SetPasswordButton);
         setPassword.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {// TODO: testing
-
-                String storedLatitude = sh.getString("latitude", "");
-                String storedLongitude = sh.getString("longitude", "");
-                String decryptedlatitude = null;
-                String decryptedlongitude = null;
-
-
-
-                KeyStore ks = null;
-                try {
-                    ks = KeyStore.getInstance("AndroidKeyStore");
-                } catch (KeyStoreException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    ks.load(null);
-                } catch (CertificateException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
-                KeyGenerator keyGenerator = null;
-                try {
-                    keyGenerator = KeyGenerator
-                            .getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (NoSuchProviderException e) {
-                    e.printStackTrace();
-                }
-                SecretKey key = null;
-                try {
-                    if (!ks.containsAlias(KEY_ALIAS)) {
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                            keyGenerator.init(new KeyGenParameterSpec.Builder(KEY_ALIAS,
-                                    KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                                    .build());
-                        }
-                    } else {
-                        try {
-                            key = ((KeyStore.SecretKeyEntry) ks.getEntry("Alias", null)).getSecretKey();
-                        } catch (KeyStoreException e) {
-                            e.printStackTrace();
-                        } catch (NoSuchAlgorithmException e) {
-                            e.printStackTrace();
-                        } catch (UnrecoverableEntryException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                } catch (KeyStoreException e) {
-                    e.printStackTrace();
-                } catch (InvalidAlgorithmParameterException e) {
-                    e.printStackTrace();
-                }
-                //key = keyGenerator.generateKey();
-                SharedPreferences pref = getSharedPreferences("shared_preference", Context.MODE_PRIVATE);
-                Cipher cipher = null;
-                try {
-                    cipher = Cipher.getInstance(AES_MODE);
-                    cipher.init(Cipher.ENCRYPT_MODE, key);
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (NoSuchPaddingException e) {
-                    e.printStackTrace();
-                } catch (InvalidKeyException e) {
-                    e.printStackTrace();
-                }
-                String testStoreIV = null;
-                byte[] testdecodeIV = null;
-                IvParameterSpec latIvParameterSpec = new IvParameterSpec(cipher.getIV());
-                byte[] testgetIV = latIvParameterSpec.getIV();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    testStoreIV = java.util.Base64.getEncoder()
-                            .encodeToString(latIvParameterSpec.getIV());
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    testdecodeIV = java.util.Base64.getDecoder()
-                            .decode(testStoreIV);
-                }
-
-
-//                System.out.println(sh.getAll());
-//                Intent intent = new Intent(getApplicationContext(), SetPasswordActivity.class);
-//                startActivity(intent);
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), SetPasswordActivity.class);
+                startActivity(intent);
             }
         });
     }
