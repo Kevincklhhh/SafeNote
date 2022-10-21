@@ -113,6 +113,7 @@ public class NoteActivity extends AppCompatActivity {
         addLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getLocation();
+                Toast.makeText(getApplicationContext(), "Added location successfully!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -193,7 +194,7 @@ public class NoteActivity extends AppCompatActivity {
             FileOutputStream writer = new FileOutputStream(new File(path, fileName));
             writer.write(content);
             writer.close();
-            Toast.makeText(getApplicationContext(), "Wrote to file: " + fileName, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Saved file successfully" + fileName, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
