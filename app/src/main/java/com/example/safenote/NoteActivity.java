@@ -151,28 +151,25 @@ public class NoteActivity extends AppCompatActivity {
         });
 
         Button finish = findViewById(R.id.finish_note);
-        finish.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String content = note_title.getText().toString() + "\n" + note.getText().toString();
-                if (note_title.getText().toString().indexOf('\n') >= 0) {
-                    Toast.makeText(getApplicationContext(), "Save failed: Title cannot contain multiple lines!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                try {
-                    byte[] encrypted = keyManager.encrypt(getApplicationContext(), content.getBytes(StandardCharsets.UTF_8));
-                    StorageToInternalStorage("note", encrypted);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        finish.setOnClickListener(v -> {
+            String content = note_title.getText().toString() + "\n" + note.getText().toString();
+            if (note_title.getText().toString().indexOf('\n') >= 0) {
+                Toast.makeText(getApplicationContext(), "Save failed: Title cannot contain multiple lines!", Toast.LENGTH_SHORT).show();
+                return;
             }
-
+            try {
+                byte[] encrypted = keyManager.encrypt(getApplicationContext(), content.getBytes(StandardCharsets.UTF_8));
+                StorageToInternalStorage("note", encrypted);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
 
         // decode
         String content = "\n";
         try {
             byte[] encrypted = ReadFromInternalStorage("note");
-            if (encrypted == null) content = "\n";
+            if (encrypted.length == 0) content = "\n";
             else
                 content = new String(keyManager.decrypt(getApplicationContext(), encrypted), StandardCharsets.UTF_8);
         } catch (Exception e) {
@@ -187,7 +184,8 @@ public class NoteActivity extends AppCompatActivity {
             separate = 0;
         }
         note_title.setText(content.substring(0, separate));
-        note.setText(content.substring(separate + 1, content.length()));
+        if (separate >= content.length() - 1) note.setText("");
+        else note.setText(content.substring(separate + 1, content.length()));
 
     }
 
