@@ -63,8 +63,8 @@ public class SetPasswordActivity extends AppCompatActivity {
             SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);//store password in shared preference
             String storedPasswordHash = sh.getString("password", "");
             SharedPreferences.Editor myEdit = sh.edit();
-            myEdit.putString("password", "");
-            myEdit.apply();
+//            myEdit.putString("password", "");
+//            myEdit.apply();
 
 
             if (!newPassword.getText().toString().equals(confirmPassword.getText().toString())) {
@@ -84,11 +84,6 @@ public class SetPasswordActivity extends AppCompatActivity {
             }
             else if(storedPasswordHash.equals("")){
                 System.out.println("is it executed emptystored");
-                Toast.makeText(
-                        getApplicationContext(),
-                        "Changed Password successfully!",
-                        Toast.LENGTH_SHORT
-                ).show();
                 String newPasswordString = newPassword.getText().toString();//store the password in shared preference as key-value pair
                 byte[] hashed = null;
                 String toStore = null;
@@ -97,21 +92,16 @@ public class SetPasswordActivity extends AppCompatActivity {
                     hashed = hashPassword(newPasswordString);
                     EncryptedByte = km.encrypt(getApplicationContext(), hashed);
                     toStore = Base64.encodeToString(EncryptedByte, Base64.DEFAULT);
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (NoSuchPaddingException e) {
-                    e.printStackTrace();
-                } catch (IllegalBlockSizeException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (BadPaddingException e) {
-                    e.printStackTrace();
-                } catch (NoSuchProviderException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 myEdit.putString("password", toStore);
                 myEdit.apply();
+                Toast.makeText(
+                        getApplicationContext(),
+                        "Password is set!",
+                        Toast.LENGTH_SHORT
+                ).show();
             }
             else {
                 try {
@@ -137,11 +127,6 @@ public class SetPasswordActivity extends AppCompatActivity {
                 try {
                     if (Arrays.equals(hashPassword(oldPassword.getText().toString()), decryptedstoredPH)) {//old password equals entered old password, or oldpassword is empty (meaning it's new user)
 
-                        Toast.makeText(
-                                getApplicationContext(),
-                                "Changed Password successfully!",
-                                Toast.LENGTH_SHORT
-                        ).show();
                         String newPasswordString = newPassword.getText().toString();//store the password in shared preference as key-value pair
                         byte[] hashed = null;
                         String toStore = null;
@@ -167,6 +152,11 @@ public class SetPasswordActivity extends AppCompatActivity {
                         myEdit.putString("password", toStore);
                         myEdit.apply();
                         System.out.println("new stored password is " + sh.getString("password", "(failed to get)"));
+                        Toast.makeText(
+                                getApplicationContext(),
+                                "Changed Password successfully!",
+                                Toast.LENGTH_SHORT
+                        ).show();
                     } else {
                         System.out.println("Old password entered incorrectly, old password is " + storedPasswordHash);
                         Toast.makeText(

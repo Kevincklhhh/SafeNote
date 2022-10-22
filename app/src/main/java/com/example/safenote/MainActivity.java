@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sh = getSharedPreferences("shared_preference", MODE_PRIVATE);
         SharedPreferences.Editor myEdit = sh.edit();
 
-
         login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 byte[] decodedStoredPH = null;
@@ -71,14 +70,14 @@ public class MainActivity extends AppCompatActivity {
                 if (storedPasswordHash.equals("")) {
                     Toast.makeText(
                             getApplicationContext(),
-                            "Please set a password!",
+                            "Please set a password before first use!",
                             Toast.LENGTH_SHORT
                     ).show();
                     System.out.println("Please set a password!");
                 } else if(passwordInput.getText().toString().equals("")){
                     Toast.makeText(
                             getApplicationContext(),
-                            "Please enter a non-empty password!",
+                            "Please enter a password!",
                             Toast.LENGTH_SHORT
                     ).show();
                 }

@@ -124,6 +124,10 @@ public class NoteActivity extends AppCompatActivity {
                 String storedLongitude = sh.getString("longitude", "");
                 String decryptedlatitude = null;
                 String decryptedlongitude = null;
+                if (storedLatitude.length() == 0) {
+                    Toast.makeText(getApplicationContext(), "No location added yet. Please save a location first!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 try {
                     decryptedlatitude = new String(kmlat.decrypt(getApplicationContext(), Base64.decode(storedLatitude.getBytes("UTF-8"), Base64.DEFAULT)));
                     decryptedlongitude = new String(kmlong.decrypt(getApplicationContext(), Base64.decode(storedLongitude.getBytes("UTF-8"), Base64.DEFAULT)));
@@ -194,7 +198,7 @@ public class NoteActivity extends AppCompatActivity {
             FileOutputStream writer = new FileOutputStream(new File(path, fileName));
             writer.write(content);
             writer.close();
-            Toast.makeText(getApplicationContext(), "Saved file successfully" + fileName, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Saved note successfully", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
